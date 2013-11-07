@@ -10,9 +10,14 @@ threadDict = {}
 
 HOST = ''
 PORT = 12700
+
+# socket queue size
 MAX_QUEUE_SIZE = 5
+# largest character amount the server can receive every time
 MAX_BUFFER_SIZE = 8192
-    
+
+MIN_COMMAND_LENGTH = 4
+
 class MyThread(threading.Thread):
     def __init__(self, connection, username):
         threading.Thread.__init__(self)
@@ -25,6 +30,7 @@ class MyThread(threading.Thread):
         try:
             self.connection.send(string)
         except:
+            print self.username + " exception in send()"
             try:
                 self.connection.shutdown()
                 self.connection.close()
@@ -45,6 +51,7 @@ class MyThread(threading.Thread):
         global userDict
         global threadDict
         command = string.split(" ")
+        # add code here to add more command
         if command[0] == "talk":
             thr = threadDict[command[1]]
             content = "talk " + self.username
@@ -56,14 +63,19 @@ class MyThread(threading.Thread):
                 self.send("pubkey " + command[1] + " " + userDict[command[1]])
             else:
                 self.send("error user not exist")
+        else:
+            self.send("error no such command")
     
     def run(self):
         try:
             while True:
                 command = self.connection.recv(MAX_BUFFER_SIZE)
+                if len(command) < MIN_COMMAND_LENGTH:
+                    raise Exception()
                 print "receive from " + self.username + ": " + command
                 self.commandMatcher(command)
         except:
+            print self.username + " exception in run()"
             try:
                 self.connection.shutdown()
                 self.connection.close()
