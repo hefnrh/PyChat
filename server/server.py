@@ -61,6 +61,7 @@ class MyThread(threading.Thread):
         try:
             while True:
                 command = self.connection.recv(MAX_BUFFER_SIZE)
+                print "receive from " + self.username + ": " + command
                 self.commandMatcher(command)
         except:
             try:
