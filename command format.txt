@@ -1,22 +1,26 @@
 client:
-	getpubkey <username>:						request <username>'s public key
+	getpubkey <username>						request <username>'s public key
 	
-	talk <to username> <encrypted> <content>:	send <content> to <to username>,
+	talk <to username> <encrypted> <content>	send <content> to <to username>,
 												<encrypted> represents whether the content
 												is encrypted, only two valid value "true"
 												and "false"
 												
-	<username> <public key>:					log in with username <username> and public key <public key>, 
+	<username> <public key>						log in with username <username> and public key <public key>, 
 												send this command only once after connection is built
-
-server:
-	pubkey <username> <public key>:				send <username>'s public key
 	
-	talk <from username> <content>:				send <content> from <from username> to target,
+	start <to username>	<encryptedsessionkey>	start a session to <to username> with <encryptedsessionkey>
+	
+server:
+	pubkey <username> <public key>				send <username>'s public key
+	
+	talk <from username> <content>				send <content> from <from username> to target,
 												<content> starts with encryption information
 	
-	error <message>:							send error message to client with message <message>
+	error <message>								send error message to client with message <message>
 	
-	online <username1> <username2> ... :		send new user information to client
+	online <username1> <username2> ...			send new user information to client
 	
-	offline <username1> <username2> ... :		send log out information to client
+	offline <username1> <username2> ...			send log out information to client
+	
+	start <from username> <encryptedsessionkey>	send <encryptedsessionkey> from <from username> to target

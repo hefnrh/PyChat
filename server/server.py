@@ -53,6 +53,9 @@ class MyThread(threading.Thread):
         command = string.split(" ")
         # add code here to add more command
         if command[0] == "talk":
+            if not threadDict.has_key(command[1]):
+                self.send("error user not exist")
+                return None
             thr = threadDict[command[1]]
             content = "talk " + self.username
             for i in range(2, len(command)):
@@ -63,6 +66,13 @@ class MyThread(threading.Thread):
                 self.send("pubkey " + command[1] + " " + userDict[command[1]])
             else:
                 self.send("error user not exist")
+        elif command[0] == "start":
+            if not threadDict.has_key(command[1]):
+                self.send("error user not exist")
+                return None
+            thr = threadDict[command[1]]
+            content = "start " + self.username + " " + command[2]
+            thr.send(content)
         else:
             self.send("error no such command")
     
