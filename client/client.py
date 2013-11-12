@@ -135,7 +135,7 @@ class ListenThread(threading.Thread):
         while not self.pubkeyDict.has_key(oppname):
             pass
         encryptedKey = self.encrypter.asymmetricEncrypt(key, self.pubkeyDict[oppname])
-        self.send("start " + oppname + " " + encryptedKey)
+        self.send("start " + oppname + " " + str(encryptedKey))
         self.serverHandle.startTalkHandle(oppname)
         
 class Client:
