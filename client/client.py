@@ -6,6 +6,7 @@ import threading
 # largest character amount the client can receive every time
 MAX_BUFFER_SIZE = 8192
 
+MIN_COMMAND_LENGTH = 4
 # abstract class to inherit
 # client call the function of this class to
 # handle command from server
@@ -97,6 +98,8 @@ class ListenThread(threading.Thread):
         try:
             while True:
                 command = self.connection.recv(MAX_BUFFER_SIZE)
+                if len(command) < MIN_COMMAND_LENGTH:
+                    raise Exception()
                 self.commandMatcher(command)
         except:
             try:
