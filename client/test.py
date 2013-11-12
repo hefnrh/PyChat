@@ -31,6 +31,11 @@ class MyEncrypter(Encrypter):
 
 enc = MyEncrypter()
 handle = HandleInstance()
-client = Client("127.0.0.1", 12700, "testuser", enc)
+username = sys.stdin.readline()
+client = Client("127.0.0.1", 12700, username, enc)
 client.connect(handle)
-line = sys.stdin.readline()
+name = sys.stdin.readline()
+client.startTalk(name)
+while True:
+    line = sys.stdin.readline()
+    client.sendMessage(name, False, line)
