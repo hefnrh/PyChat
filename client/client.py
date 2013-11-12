@@ -20,6 +20,8 @@ class ServerCommandHandle:
         pass
     def talkHandle(self, opp, content):
         pass
+    def startTalkHandle(self, opp):
+        pass
     # called when client fails to connect to the server
     def connectFailHandle(self):
         pass
@@ -43,7 +45,7 @@ class Encrypter:
 
 class ListenThread(threading.Thread):
     # serverHandle is instance of subclass of ServerHandle 
-    def __init__(self, connection, serverHandle, encrypter):
+    def __init__(self, connection, serverHandle, encrypter, privateKey):
         threading.Thread.__init__(self)
         threading.Thread.setDaemon(self, True)
         self.connection = connection
@@ -51,6 +53,7 @@ class ListenThread(threading.Thread):
         self.pubkeyDict = {}
         self.sessionKeyDict = {}
         self.encrypter = encrypter
+        self.privateKey = privateKey
     
     def commandMatcher(self, string):
         command = string.split(" ")
@@ -67,8 +70,7 @@ class ListenThread(threading.Thread):
             for i in range(3, len(command)):
                 content = content + command[i] + " "
             if command[2] == "true":
-                #content = self.encrypter
-                pass
+                content = self.encrypter.symmetricEncrypt(content, self.sessionKeyDict[user])
             self.serverHandle.talkHandle(user, content)
         
         elif command[0] == "error":
@@ -87,7 +89,9 @@ class ListenThread(threading.Thread):
             self.pubkeyDict[command[1]] = command[2]
         
         elif command[0] == "start":
-            self.sessionKeyDict[command[1]] = command[2]
+            sessionKey = self.encrypter.asymmetricEncrypt(command[2], self.privateKey)
+            self.sessionKeyDict[command[1]] = sessionKey
+            self.serverHandle.startTalkHandle(command[1])
     
     def run(self):
         try:
@@ -104,8 +108,8 @@ class ListenThread(threading.Thread):
     
     def sendMessage(self, oppname, encrypted, content):
         if encrypted:
-            # encrypt content here
-            pass
+            content = self.encrypter.symmetricEncrypt(content, self.sessionKeyDict[oppname])
+            self.send("talk " + oppname + " true " + content)
         else:
             self.send("talk " + oppname + " false " + content)
                 
@@ -122,7 +126,14 @@ class ListenThread(threading.Thread):
     
     def startTalk(self, oppname):
         # get session key and send start command here
-        pass
+        key = self.encrypter.generateKey()
+        self.sessionKeyDict[oppname] = key
+        self.send("getpubkey " + oppname)
+        while not self.pubkeyDict.has_key(oppname):
+            pass
+        encryptedKey = self.encrypter.asymmetricEncrypt(key, self.pubkeyDict[oppname])
+        self.send("start " + oppname + " " + encryptedKey)
+        self.serverHandle.startTalkHandle(oppname)
         
 class Client:
     def __init__(self, host, port, username, encrypter):
@@ -140,7 +151,7 @@ class Client:
         try:
             self.sock.connect((self.host, self.port))
             self.sock.send(self.username + " " + str(self.pubkey))
-            self.listenThread = ListenThread(self.sock, serverHandle, self.encrypter)
+            self.listenThread = ListenThread(self.sock, serverHandle, self.encrypter, self.privateKey)
             self.listenThread.start()
         except:
             serverHandle.connectFailHandle()
