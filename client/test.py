@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from client import *
+from client import ServerCommandHandle, Encrypter, Client
 import sys
 
 class HandleInstance(ServerCommandHandle):
@@ -38,4 +38,4 @@ name = sys.stdin.readline()
 client.startTalk(name)
 while True:
     line = sys.stdin.readline()
-    client.sendMessage(name, False, line)
+    client.sendMessage(name, True, line)
