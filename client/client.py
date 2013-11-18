@@ -67,17 +67,13 @@ class ListenThread(threading.Thread):
         
         elif command[0] == "talk":
             user = command[1]
-            content = ""
-            for i in range(3, len(command)):
-                content = content + command[i] + " "
+            content = string[string.find(command[3]):]
             if command[2] == "true":
                 content = self.encrypter.symmetricEncrypt(content, self.sessionKeyDict[user])
             self.serverHandle.talkHandle(user, content)
         
         elif command[0] == "error":
-            content = ""
-            for i in range(1, len(command)):
-                content = content + command[i] + " "
+            content = string[string.find(command[1]):]
             self.serverHandle.errorHandle(content)
         
         elif command[0] == "offline":

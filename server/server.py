@@ -57,9 +57,8 @@ class MyThread(threading.Thread):
                 self.send("error user not exist")
                 return None
             thr = threadDict[command[1]]
-            content = "talk " + self.username
-            for i in range(2, len(command)):
-                content = content + " " + command[i]
+            content = "talk " + self.username + " "
+            content = content + string[string.find(command[2]):]
             thr.send(content)
         elif command[0] == "getpubkey":
             if userDict.has_key(command[1]):
