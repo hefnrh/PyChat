@@ -3,6 +3,7 @@
 from client import ServerCommandHandle, Encrypter, Client
 import sys
 
+# change code here to implement your own client
 class HandleInstance(ServerCommandHandle):
     def errorHandle(self, message):
         print "error", message
@@ -19,6 +20,7 @@ class HandleInstance(ServerCommandHandle):
     def connectDownHandle(self):
         print "connection down"
         
+# change code here to implement your own encrypt system
 class MyEncrypter(Encrypter):
     def generateKeyPair(self):
         return (123, 456)
