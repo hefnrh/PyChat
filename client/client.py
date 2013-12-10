@@ -39,9 +39,13 @@ class Encrypter:
         pass
     def generateKey(self):
         pass
-    def asymmetricEncrypt(self, message, key):
+    def asymmetricEncode(self, message, key):
         pass
-    def symmetricEncrypt(self, message, key):
+    def asymmetricDecode(self, message, key):
+        pass
+    def symmetricEncode(self, message, key):
+        pass
+    def symmetricDecode(self, message, key):
         pass
 
 class ListenThread(threading.Thread):

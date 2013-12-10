@@ -1,7 +1,8 @@
-from des import *
-from rabin import *
+from des import DES
+from rabin import rabin
+from client import Encrypter
 
-class MyEncrypter:
+class MyEncrypter(Encrypter):
     def __init__(self):
         self.des = DES()
         self.rabin = rabin()

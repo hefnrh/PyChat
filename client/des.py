@@ -2,6 +2,7 @@
 from functools import partial  
 import random
 import string
+
 class DES(object):  
     """ 
     interface: input_key(s, base=10), encode(s), decode(s) 
