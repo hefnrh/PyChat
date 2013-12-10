@@ -70,7 +70,7 @@ class MyThread(threading.Thread):
                 self.send("error user not exist")
                 return None
             thr = threadDict[command[1]]
-            content = "start " + self.username + " " + command[2]
+            content = "start " + self.username + " " + string[string.find(command[2]):]
             thr.send(content)
         else:
             self.send("error no such command")

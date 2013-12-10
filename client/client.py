@@ -58,7 +58,7 @@ class ListenThread(threading.Thread):
     
     def commandMatcher(self, string):
         command = string.split(" ")
-        
+        print "origin msg:", string
         if command[0] == "online":
             userlist = []
             for i in range(1, len(command)):
@@ -84,10 +84,12 @@ class ListenThread(threading.Thread):
         
         elif command[0] == "pubkey":
             self.pubkeyDict[command[1]] = command[2]
+            print command[1] + " pubkey: " + command[2]
         
         elif command[0] == "start":
-            sessionKey = self.encrypter.asymmetricDecode(command[2], self.privateKey)
+            sessionKey = self.encrypter.asymmetricDecode(string[string.find(command[2]):], self.privateKey)
             self.sessionKeyDict[command[1]] = sessionKey
+            print command[1] + " session: " + sessionKey
             self.serverHandle.startTalkHandle(command[1])
     
     def run(self):
@@ -126,6 +128,7 @@ class ListenThread(threading.Thread):
     def startTalk(self, oppname):
         # get session key and send start command here
         key = self.encrypter.generateKey()
+        print "sessionkey to", oppname, key
         self.sessionKeyDict[oppname] = key
         self.send("getpubkey " + oppname)
         while not self.pubkeyDict.has_key(oppname):

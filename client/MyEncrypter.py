@@ -21,7 +21,7 @@ class MyEncrypter:
         return self.rabin.getrabinkey()
     
     def asymmetricEncode(self, message, key):
-        return self.rabin.encode(message, key)
+        return self.rabin.encode(message, long(key))
     
     def asymmetricDecode(self, message, key):
         return self.rabin.decode(message, key[0], key[1])

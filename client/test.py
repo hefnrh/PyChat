@@ -2,6 +2,7 @@
 
 from client import ServerCommandHandle, Encrypter, Client
 import sys
+from MyEncrypter import *
 
 # change code here to implement your own client
 class HandleInstance(ServerCommandHandle):
@@ -20,24 +21,17 @@ class HandleInstance(ServerCommandHandle):
     def connectDownHandle(self):
         print "connection down"
         
-# change code here to implement your own encrypt system
-class MyEncrypter(Encrypter):
-    def generateKeyPair(self):
-        return (123, 456)
-    def generateKey(self):
-        return 111
-    def asymmetricEncrypt(self, message, key):
-        return message
-    def symmetricEncrypt(self, message, key):
-        return message
 
 enc = MyEncrypter()
 handle = HandleInstance()
 username = sys.stdin.readline()
+username = username[0:len(username) - 1]
 client = Client("127.0.0.1", 12700, username, enc)
 client.connect(handle)
 name = sys.stdin.readline()
+name = name[0:len(name) - 1]
 client.startTalk(name)
 while True:
     line = sys.stdin.readline()
+    line = line[0:len(line) - 1]
     client.sendMessage(name, True, line)
