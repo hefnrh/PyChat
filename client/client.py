@@ -69,7 +69,7 @@ class ListenThread(threading.Thread):
             user = command[1]
             content = string[string.find(command[3]):]
             if command[2] == "true":
-                content = self.encrypter.symmetricEncrypt(content, self.sessionKeyDict[user])
+                content = self.encrypter.symmetricDecode(content, self.sessionKeyDict[user])
             self.serverHandle.talkHandle(user, content)
         
         elif command[0] == "error":
@@ -86,7 +86,7 @@ class ListenThread(threading.Thread):
             self.pubkeyDict[command[1]] = command[2]
         
         elif command[0] == "start":
-            sessionKey = self.encrypter.asymmetricEncrypt(command[2], self.privateKey)
+            sessionKey = self.encrypter.asymmetricDecode(command[2], self.privateKey)
             self.sessionKeyDict[command[1]] = sessionKey
             self.serverHandle.startTalkHandle(command[1])
     
@@ -99,7 +99,7 @@ class ListenThread(threading.Thread):
                 self.commandMatcher(command)
         except:
             try:
-                self.connection.shutdoan()
+                self.connection.shutdown()
                 self.connection.close()
             except:
                 pass
@@ -107,7 +107,7 @@ class ListenThread(threading.Thread):
     
     def sendMessage(self, oppname, encrypted, content):
         if encrypted:
-            content = self.encrypter.symmetricEncrypt(content, self.sessionKeyDict[oppname])
+            content = self.encrypter.symmetricEncode(content, self.sessionKeyDict[oppname])
             self.send("talk " + oppname + " true " + content)
         else:
             self.send("talk " + oppname + " false " + content)
@@ -117,7 +117,7 @@ class ListenThread(threading.Thread):
             self.connection.send(content)
         except:
             try:
-                self.connection.shutdoan()
+                self.connection.shutdown()
                 self.connection.close()
             except:
                 pass
@@ -130,7 +130,7 @@ class ListenThread(threading.Thread):
         self.send("getpubkey " + oppname)
         while not self.pubkeyDict.has_key(oppname):
             pass
-        encryptedKey = self.encrypter.asymmetricEncrypt(key, self.pubkeyDict[oppname])
+        encryptedKey = self.encrypter.asymmetricEncode(key, self.pubkeyDict[oppname])
         self.send("start " + oppname + " " + str(encryptedKey))
         self.serverHandle.startTalkHandle(oppname)
         

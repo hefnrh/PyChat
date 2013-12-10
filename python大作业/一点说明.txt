@@ -1,0 +1,2 @@
+ChattingUI.py 就是主程序，LoginFrame.py 是一个登陆界面的类，主程序里调用的。
+wxPython2.8-win32-unicode-2.8.12.1-py27.exe 是我的wx.python库的安装程序
